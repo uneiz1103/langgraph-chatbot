@@ -1,0 +1,14 @@
+langchain
+langchain-core
+langgraph
+
+langchain-openai
+openai
+
+python-dotenv
+
+typing
+
+pydantic
+
+streamlit
