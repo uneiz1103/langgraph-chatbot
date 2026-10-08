@@ -8,6 +8,7 @@ from langgraph.prebuilt import ToolNode, tools_condition
 from langchain_community.tools import DuckDuckGoSearchRun
 from langchain_core.tools import tool
 from dotenv import load_dotenv
+import os
 import sqlite3
 import requests
 
@@ -49,12 +50,23 @@ def calculator(first_num: float, second_num: float, operation: str) -> dict:
 @tool
 def get_stock_price(symbol: str) -> dict:
     """
-    Fetch latest stock price for a given symbol (e.g. 'AAPL', 'TSLA') 
-    using Alpha Vantage with API key in the URL.
+    Fetch latest stock price for a given symbol (e.g. 'AAPL', 'TSLA')
+    using Alpha Vantage.
     """
-    url = ALPHAVANTAGE_API_KEY
-    r = requests.get(url)
-    return r.json()
+    api_key = os.getenv("ALPHAVANTAGE_API_KEY")
+    if not api_key:
+        return {"error": "ALPHAVANTAGE_API_KEY is not set. Add it to your .env file."}
+
+    try:
+        r = requests.get(
+            "https://www.alphavantage.co/query",
+            params={"function": "GLOBAL_QUOTE", "symbol": symbol, "apikey": api_key},
+            timeout=10,
+        )
+        r.raise_for_status()
+        return r.json()
+    except requests.RequestException as e:
+        return {"error": str(e)}
 
 
 

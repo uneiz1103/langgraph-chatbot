@@ -1,5 +1,6 @@
 venv/
 .env
+chatbot.db*
 __pycache__/
 .vscode/*
 prac.py
